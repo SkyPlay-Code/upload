@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stylo-Uploader</title>
+    <!-- We'll use the Poppins font from Google Fonts for a stylish look -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="upload-container">
+        <h1>Upload Your Files</h1>
+        <p class="subtitle">Drag and drop multiple files at once.</p>
+        
+        <div class="upload-box">
+            <!-- Add the "multiple" attribute here! -->
+            <input type="file" id="file-upload" hidden multiple>
+            
+            <!-- State: Default -->
+            <div class="state-content" id="default-state">
+                <svg class="upload-icon" ... ></svg> <!-- (SVG remains the same) -->
+                <p class="main-text">Drag & Drop your files here</p>
+                <p class="sub-text">or <label for="file-upload" class="browse-btn"><span>Browse</span></label></p>
+            </div>
+            
+            <!-- State: Progress -->
+            <div class="state-content" id="progress-state" style="display: none;">
+                <p class="main-text" id="progress-title">Uploading 0/0</p>
+                <!-- This is where our file list will be dynamically added -->
+                <ul class="file-list" id="progress-file-list"></ul>
+            </div>
+             
+            <!-- State: Success -->
+            <div class="state-content" id="success-state" style="display: none;">
+                <svg class="success-icon" ... ></svg> <!-- (Checkmark SVG remains the same) -->
+                <p class="main-text success">Uploads Complete!</p>
+                <!-- This will now be a list of successful uploads -->
+                <ul class="file-list" id="success-file-list"></ul>
+                <button class="action-btn" id="upload-another">Upload More</button>
+            </div>
+
+            <!-- Error State Content -->
+            <div class="upload-error" id="error-state" style="display: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                <p>Upload Failed. Please try again.</p>
+                <button class="upload-another-btn" id="try-again">Try Again</button>
+            </div>
+        </div>
+    </div>
+    <!-- Link our JavaScript file -->
+    <script src="script.js"></script>
+</body>
+</html>

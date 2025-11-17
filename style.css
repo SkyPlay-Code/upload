@@ -1,0 +1,316 @@
+/* --- Google Font Import --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Bebas+Neue&display=swap');
+
+/* --- CSS Variables & Global Reset --- */
+:root {
+    --bg-color: #f1f1f1;
+    --card-bg: #ffffff;
+    --font-color: #111111;
+    --border-color: #111111;
+    --accent-color: #e5a500; /* A bold yellow */
+    --accent-color-hover: #ffbf00;
+    --success-color: #00A36C;
+    --error-color: #D22B2B;
+
+    --font-body: 'Inter', sans-serif;
+    --font-heading: 'Bebas Neue', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg-color);
+    color: var(--font-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* --- Container & Typography --- */
+.upload-container {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    font-family: var(--font-heading);
+    font-size: 3.5rem;
+    letter-spacing: 2px;
+    color: var(--font-color);
+    margin-bottom: 0;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: #555;
+    margin-bottom: 3rem;
+}
+
+/* --- The Main Uploader Card --- */
+.upload-box {
+    background-color: var(--card-bg);
+    border: 3px solid var(--border-color);
+    padding: 40px;
+    cursor: pointer;
+    box-shadow: 8px 8px 0px var(--border-color);
+    transition: all 0.2s ease-out;
+}
+
+.upload-box:hover {
+    box-shadow: 12px 12px 0px var(--accent-color);
+    transform: translate(-4px, -4px);
+}
+
+.upload-box.dragover {
+    border-color: var(--accent-color);
+    background-color: #fff8e1;
+}
+
+/* --- Content & State Styling --- */
+.state-content.hidden {
+    display: none !important;
+}
+
+.upload-icon {
+    width: 50px;
+    height: 50px;
+    stroke-width: 1.5;
+    color: var(--border-color);
+    margin-bottom: 20px;
+}
+
+.main-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.sub-text {
+    font-size: 1rem;
+    color: #555;
+}
+
+.browse-btn span {
+    color: var(--font-color);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    cursor: pointer;
+}
+
+.browse-btn span:hover {
+    color: var(--accent-color);
+}
+
+/* --- Progress Bar --- */
+#progress-state .file-name {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background-color: #e0e0e0;
+    border: 3px solid var(--border-color);
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background-color: var(--accent-color);
+    transition: width 0.4s ease-out;
+}
+
+.progress-text {
+    margin-top: 1rem;
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    color: var(--font-color);
+}
+
+
+/* --- Success & Error States --- */
+.success-icon, .error-icon {
+    width: 48px;
+    height: 48px;
+    stroke-width: 2;
+    margin-bottom: 1rem;
+}
+
+.success-icon { color: var(--success-color); }
+.main-text.success { color: var(--success-color); }
+.error-icon { color: var(--error-color); }
+.main-text.error { color: var(--error-color); }
+
+.image-preview {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 24px auto;
+    background-size: cover;
+    background-position: center;
+    border: 3px solid var(--border-color);
+    display: none;
+}
+
+/* --- Link Container & Input --- */
+.link-container {
+    display: flex;
+    margin-top: 24px;
+}
+
+#download-link-input {
+    flex-grow: 1;
+    height: 50px;
+    padding: 0 15px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    border: 3px solid var(--border-color);
+    background-color: #fff;
+    outline: none;
+}
+
+/* --- Buttons --- */
+.action-btn, #copy-link-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    padding: 0 24px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 700;
+    border: 3px solid var(--border-color);
+    cursor: pointer;
+    box-shadow: 4px 4px 0px var(--border-color);
+    transition: all 0.1s ease-out;
+}
+
+.action-btn {
+    background-color: var(--accent-color);
+    color: var(--font-color);
+    margin-top: 24px;
+}
+
+.action-btn:hover, #copy-link-btn:hover {
+    background-color: var(--accent-color-hover);
+    box-shadow: 6px 6px 0px var(--border-color);
+    transform: translate(-2px, -2px);
+}
+
+.action-btn:active, #copy-link-btn:active {
+    box-shadow: 0px 0px 0px var(--border-color);
+    transform: translate(4px, 4px);
+}
+
+#copy-link-btn {
+    flex-shrink: 0; /* Prevents the button from shrinking */
+    padding: 0 12px;
+    background-color: #fff;
+    margin-left: -3px; /* Overlap the input border */
+    position: relative; /* For the "Copied!" feedback text */
+}
+
+#copy-feedback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: var(--success-color);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+#copy-link-btn.copied svg {
+    visibility: hidden;
+}
+
+#copy-link-btn.copied #copy-feedback {
+    opacity: 1;
+}
+
+/* --- Add this to the bottom of your style.css file --- */
+
+/* --- File List Styling --- */
+.file-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 2rem;
+    width: 100%;
+    text-align: left;
+}
+
+.file-list-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: #f9f9f9;
+    border: 3px solid var(--border-color);
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.file-list-item .filename {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
+.file-list-item .status {
+    flex-shrink: 0;
+    margin-left: 1rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    letter-spacing: 1px;
+}
+
+/* Status Indicators */
+.status.processing { color: var(--accent-color); }
+.status.success { color: var(--success-color); }
+.status.error { color: var(--error-color); }
+
+/* --- Progress Bar inside the list item --- */
+.file-progress {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 4px;
+    width: 0%; /* Will be updated with JS */
+    background-color: var(--accent-color);
+    transition: width 0.4s ease-out;
+}
+
+/* --- Download link on the success screen --- */
+#success-file-list .download-link {
+    margin-left: 1rem;
+    padding: 4px 8px;
+    border: 2px solid var(--border-color);
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--font-color);
+    transition: all 0.2s ease-out;
+}
+
+#success-file-list .download-link:hover {
+    background-color: var(--accent-color);
+    box-shadow: 2px 2px 0 var(--border-color);
+    transform: translate(-1px, -1px);
+}
