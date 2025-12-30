@@ -1,53 +1,45 @@
+// ================= CONFIGURATION =================
+// 1. YOUR GOOGLE SCRIPT URL
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzcecvS-yi7CwCWnqIxXRcJKkXU9E7y_-h6L3ZOT7HjbRh4KdIbI0CbhjmCYmxXwynz/exec";
-const SHORTENER_API_URL = "https://skypcode.pythonanywhere.com/api/shorten"; 
 
-// --- DOM ELEMENT SELECTION ---
+// 2. YOUR PYTHON BACKEND URL
+const SHORTENER_API_URL = "https://skypcode.pythonanywhere.com/api/shorten"; 
+// =================================================
+
+// --- DOM ELEMENTS ---
 const uploadBox = document.querySelector(".upload-box");
 const fileInput = document.getElementById("file-upload");
-// State Containers
 const allStates = {
     default: document.getElementById("default-state"),
     progress: document.getElementById("progress-state"),
     success: document.getElementById("success-state"),
     error: document.getElementById("error-state"),
 };
-// Progress & Success List Elements
 const progressTitle = document.getElementById("progress-title");
 const progressList = document.getElementById("progress-file-list");
 const successList = document.getElementById("success-file-list");
-// Buttons
 const uploadAnotherBtn = document.getElementById("upload-another");
 const tryAgainBtn = document.getElementById("try-again");
 
-// --- GLOBAL STATE ---
+// --- STATE ---
 let fileQueue = [];
 let successfulUploads = [];
 
-// --- UI STATE MANAGEMENT ---
+// --- FUNCTIONS ---
 const showState = (stateName) => {
     Object.values(allStates).forEach(state => state.style.display = 'none');
     allStates[stateName].style.display = 'block';
 };
 
-// --- CORE LOGIC ---
-
-// Handles the initial selection of files
 const handleFileSelection = (selectedFiles) => {
-    if (GOOGLE_SCRIPT_URL === "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") {
-        alert("🚨 Please update the GOOGLE_SCRIPT_URL in script.js.");
-        return;
-    }
-
     fileQueue = Array.from(selectedFiles);
-    successfulUploads = []; // Reset success list
+    successfulUploads = [];
     if (fileQueue.length === 0) return;
-
     setupProgressUI();
     showState('progress');
-    uploadNextFileInQueue(); // Start the upload process
+    uploadNextFileInQueue();
 };
 
-// Creates the initial list of files in the "progress" view
 const setupProgressUI = () => {
     progressList.innerHTML = '';
     progressTitle.textContent = `Uploading 1/${fileQueue.length}`;
@@ -55,18 +47,12 @@ const setupProgressUI = () => {
         const li = document.createElement('li');
         li.className = 'file-list-item';
         li.id = `file-item-${index}`;
-        li.innerHTML = `
-            <span class="filename">${file.name}</span>
-            <span class="status">Waiting...</span>
-            <div class="file-progress"></div>
-        `;
+        li.innerHTML = `<span class="filename">${file.name}</span><span class="status">Waiting...</span><div class="file-progress"></div>`;
         progressList.appendChild(li);
     });
 };
 
-// The main engine: uploads files one by one
 const uploadNextFileInQueue = async () => {
-    // ... (keep existing check for fileQueue length) ...
     if (fileQueue.length === 0) {
         if (successfulUploads.length > 0) {
             setupSuccessUI();
@@ -89,7 +75,7 @@ const uploadNextFileInQueue = async () => {
     statusDiv.className = 'status processing';
     
     try {
-        // 1. Upload to Google Drive
+        // --- STEP 1: UPLOAD TO GOOGLE DRIVE ---
         const base64Content = await getBase64(file);
         const payload = {
             filename: file.name,
@@ -101,51 +87,61 @@ const uploadNextFileInQueue = async () => {
         const data = await res.json();
         
         if (data.status === 'success') {
+            progressBar.style.width = '50%'; // Halfway there
             const longDriveUrl = data.downloadUrl;
             
-            // 2. STATUS UPDATE: Tell user we are shortening
+            // --- STEP 2: SHORTEN WITH PYTHON ---
             statusDiv.textContent = 'Shortening...';
-
-            // 3. Send to Python Backend
-            let finalUrl = longDriveUrl; // Default to long URL if shortener fails
+            
+            let finalUrl = longDriveUrl; // Default to long URL
             
             try {
+                // Send the Long URL to your Python Backend
                 const shortRes = await fetch(SHORTENER_API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ url: longDriveUrl })
                 });
+
+                // CHECK: Did the Python server say 200 OK?
+                if (!shortRes.ok) {
+                    throw new Error(`Server Error: ${shortRes.status}`);
+                }
+
                 const shortData = await shortRes.json();
                 
                 if (shortData.status === 'success') {
                     finalUrl = shortData.short_url;
+                } else {
+                    console.error("Shortener Logic Error:", shortData);
+                    // alert("Shortener says: " + JSON.stringify(shortData)); // Uncomment to debug logic
                 }
             } catch (shortErr) {
-                console.warn("Shortener failed, using long URL", shortErr);
+                // !!! THIS IS WHERE IT IS FAILING !!!
+                console.error("SHORTENER FAILED:", shortErr);
+                alert("Shortener Failed! \nReason: " + shortErr.message + "\n\n(Don't worry, using long link instead)");
             }
 
-            // 4. Complete
+            // --- FINISH ---
             progressBar.style.width = '100%';
             statusDiv.textContent = 'Complete';
             statusDiv.className = 'status success';
-            
-            // Push the FINAL (short) URL to the success list
             successfulUploads.push({ name: file.name, url: finalUrl });
             
         } else {
-            throw new Error(data.message || 'Unknown server error');
+            throw new Error(data.message || 'Google Drive Error');
         }
     } catch (error) {
-        console.error("Upload failed for:", file.name, error);
+        console.error("Upload failed:", error);
         statusDiv.textContent = 'Failed';
         statusDiv.className = 'status error';
+        alert("Upload Failed: " + error.message);
     } finally {
         fileQueue.shift();
         uploadNextFileInQueue();
     }
 };
 
-// Renders the final success screen with download links
 const setupSuccessUI = () => {
     successList.innerHTML = '';
     successfulUploads.forEach(upload => {
@@ -159,7 +155,6 @@ const setupSuccessUI = () => {
     });
 };
 
-// Helper to convert file to Base64 using Promises
 const getBase64 = (file) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -169,7 +164,7 @@ const getBase64 = (file) => {
     });
 };
 
-// --- EVENT LISTENERS ---
+// --- EVENTS ---
 uploadBox.addEventListener("click", () => fileInput.click());
 fileInput.addEventListener("change", (e) => handleFileSelection(e.target.files));
 uploadBox.addEventListener("dragover", (e) => { e.preventDefault(); uploadBox.classList.add("dragover"); });
@@ -179,9 +174,6 @@ uploadBox.addEventListener("drop", (e) => {
     uploadBox.classList.remove("dragover");
     handleFileSelection(e.dataTransfer.files);
 });
-
 uploadAnotherBtn.addEventListener('click', () => showState('default'));
-tryAgainBtn.addEventListener('click', () => showState('default')); // Kept for general errors
-
-// --- INITIAL STATE ---
+tryAgainBtn.addEventListener('click', () => showState('default'));
 showState('default');
