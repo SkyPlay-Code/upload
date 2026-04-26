@@ -83,7 +83,7 @@ const uploadNextFileInQueue = async () => {
             fileContent: base64Content.split(",")[1],
         };
 
-        const res = await fetch(GOOGLE_SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+        const res = await fetch(GOOGLE_SCRIPT_URL, { method: "POST", headers: {"Content-Type": "text/plain;charset=utf-8"}, body: JSON.stringify(payload) });
         const data = await res.json();
         
         if (data.status === 'success') {
