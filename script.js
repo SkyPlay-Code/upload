@@ -1,6 +1,6 @@
 // ================= CONFIGURATION =================
 // 1. YOUR GOOGLE SCRIPT URL
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzcecvS-yi7CwCWnqIxXRcJKkXU9E7y_-h6L3ZOT7HjbRh4KdIbI0CbhjmCYmxXwynz/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxmW9sXHdfPaWiE3-5QKWaFP8irXyZ31yRL78thIZB8cNue_DMoNUJPOzEup8zeMFWDFA/exec";
 
 // 2. YOUR PYTHON BACKEND URL
 const SHORTENER_API_URL = "https://skypcode.pythonanywhere.com/api/shorten"; 
